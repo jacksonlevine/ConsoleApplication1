@@ -22,12 +22,17 @@ void World::generateOneChunk() {
 
 }
 
-
-
 // Camera position and rotation
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+
+glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
 float cameraSpeed = 0.1f;
 float cameraYaw = -90.0f;
 float cameraPitch = 0.0f;
@@ -273,15 +278,25 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Calculate the new direction vector based on the yaw and pitch angles
+        glm::vec3 direction;
+        direction.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+        direction.y = sin(glm::radians(cameraPitch));
+        direction.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
 
+        // Normalize the direction vector
+        direction = glm::normalize(direction);
 
         // Set up the view matrix
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        view = glm::lookAt(cameraPos, cameraPos + direction, cameraUp);
+        //const float radius = 10.0f;
+        //float camX = sin(glfwGetTime()) * radius;
+        //float camZ = cos(glfwGetTime()) * radius;
+        //glm::mat4 view;
+        //view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
         mvp = projection * view * model;
-        std::cout << mvp[0][0];
-        std::cout << mvp[0][1];
-        std::cout << mvp[0][2];
-        // Set the view matrix uniform in the shader
+        glUseProgram(shaderProgram);
+        // Set the view matrix uniform in the shadergvf
         GLuint mvpLoc = glGetUniformLocation(shaderProgram, "mvp");
         glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
 
