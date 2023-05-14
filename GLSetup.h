@@ -10,9 +10,12 @@
 #include <folly/container/F14Map.h>
 class GLWrapper {
 public:
-	void initializeGL();
 	std::vector<GLuint> vaos;
-	GLWrapper();
+	int vaoIndex;
+	GLuint shaderProgram;
+	GLFWwindow* window;
+	int initializeGL();
+	void runGLLoop();
 };
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
