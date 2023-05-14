@@ -240,7 +240,7 @@ int main()
     // Generate a vertex array object (VAO)
     GLuint vao;
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glBindVertexArray(vao); //AND PUSH IT TO GlWrapper.vaos
 
     // Generate a vertex buffer object (VBO) for the position data
     GLuint vbo_vertices;
